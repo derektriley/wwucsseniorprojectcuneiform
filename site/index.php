@@ -120,6 +120,7 @@ function printPagination() {
 
         <!-- Custom styles for this template -->
         <link href="css/starter-template.css" rel="stylesheet">
+        <link href="css/dashboard.css" rel="stylesheet">
         
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -127,26 +128,8 @@ function printPagination() {
           <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
        
-        <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
-        <link href="css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
-
-        <!-- The real deal -->
-        <script src="js/tag-it.js" type="text/javascript" charset="utf-8"></script>
-        
         <script>
                 jQuery(document).ready(function($){
-                    $('#tags').tagit({
-                        // This will make Tag-it submit a single form value, as a comma-delimited field.
-                        singleField: true,
-                        singleFieldNode: $('#search'),
-                        singleFieldDelimiter: ' ',
-                        afterTagRemoved: function() {
-                            $('#searchform').submit(); //Submit the form
-                        }
-                    });
-                    
                     $(document).on('click','.expand-text',function(){      
                         var $Element = $(this).parent().parent().find(".panel-body");
 
@@ -174,44 +157,91 @@ function printPagination() {
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Home</a></li>
                     </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#"><span class="glyphicon glyphicon-home"></span> Dashboard</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-picture"></span> Profile</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Garfinkle</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
+                    </ul>
                 </div><!--/.nav-collapse -->
             </div>
         </div>
 
-        <div class="container">
-            <div class="starter-template">
-                <h1>Tablet Search</h1>
-                <form name="searchform" id="searchform" action="<?php echo $php_self; ?>" method="get">
-                    <div class="input-group">
-                        <input type="hidden" name="search" id="search" value="<?php if (isset($search)) {echo $search;} ?>">
-                        <ul id="tags" class="form-control"></ul>
-                        <div class="input-group-btn">
-                            <input type="submit" class="btn btn-default" tabindex="-1" name="submit_form" value="Search" />
-                            <input type="submit" class="btn btn-default" tabindex="-1" name="regex_submit" value="Regex Search" />
+        <div class="container-fluid">
+            
+                <div class="row">
+                    <div class="col-sm-3 col-md-2 sidebar">
+                        <ul class="nav nav-sidebar">
+                            <li class="active"><a href="#">My Virtual Archives</a></li>
+                            <li><a href="#">Virtual Archive 1</a></li>
+                            <li><a href="#">Tablets (3)</a></li>
+                            <li><a href="#">P101010</a></li>
+                            <li><a href="#">P121212</a></li>
+                            <li><a href="#">P123456</a></li>
+                          </ul>
+                          <ul class="nav nav-sidebar">
+                            <li><a href="#">Virtual Archive 2</a></li>
+                            <li><a href="#">Tablets (3)</a></li>
+                            <li><a href="#">P243523</a></li>
+                            <li><a href="#">P768567</a></li>
+                            <li><a href="#">P678567</a></li>
+                          </ul>
+                          <ul class="nav nav-sidebar">
+                            <li><a href="#">Virtual Archive 2</a></li>
+                            <li><a href="#">Tablets (3)</a></li>
+                            <li><a href="#">P566546</a></li>
+                            <li><a href="#">P563456</a></li>
+                            <li><a href="#">P909080</a></li>
+                          </ul>
+                        
+                    </div> <!--- col-sm-3 col-md-2 sidebar--->
+                    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                        <h1>Tablet Search</h1>
+                        <form name="searchform" id="searchform" action="<?php echo $php_self; ?>" method="get">
+                            <div class="input-group">
+                                <div class="left-inner-addon">
+                                    <i class="glyphicon glyphicon-search glyphicon-settings"></i>
+                                    <input type="text" name="search" id="search" class="form-control" value="<?php if (isset($search)) {echo $search;} ?>">
+                                </div>
+                                <div class="input-group-btn">
+                                    <input type="submit" class="btn btn-default" tabindex="-1" name="submit_form" value="Search" />
+                                    <input type="submit" class="btn btn-default" tabindex="-1" name="regex_submit" value="Regex Search" />
+                                </div>
+                            </div><!-- /input-group -->
+                        </form>
+                        <div id="tablet-output">
+                            <?php
+                            if (isset($search)) {
+                                $result = getResults();
+                                printPagination();
+                            ?>
+                            <div>
+                                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#date-modal">Date Distribution</button>
+                                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#name-modal">Name Distribution</button>
+                            </div>
+                            <?php
+
+                                printResults($result);
+
+                                printPagination();
+                            }
+                            ?>
                         </div>
-                    </div><!-- /input-group -->
-                </form>
-                <div id="tablet-output">
-                    <?php
-                    if (isset($search)) {
-                        $result = getResults();
-                        printPagination();
-                    ?>
-                    <div>
-                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#date-modal">Date Distribution</button>
-                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#name-modal">Name Distribution</button>
-                    </div>
-                    <?php
-		  
-                        printResults($result);
-			
-                        printPagination();
-                    }
-                    ?>
-                </div>
+                        
+                        
+                        <?php
+                        $result = $pdo->query("SHOW PROFILES;")->fetchAll(PDO::FETCH_ASSOC);
+                        if (empty($result) == false) {
+                            dumpResultTable($result);
+                        }
+                        ?>
+                    </div> <!--- col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main--->
+                </div> <!--- Row --->
 
-
-            </div>
+            
+            
         </div><!--/.container -->
 
 
@@ -268,11 +298,3 @@ function printPagination() {
         </div>
     </body>
 </html>
-
-
-<?php
-$result = $pdo->query("SHOW PROFILES;")->fetchAll(PDO::FETCH_ASSOC);
-if (empty($result) == false) {
-    dumpResultTable($result);
-}
-?>
